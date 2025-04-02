@@ -39,8 +39,8 @@ module.exports = async (controlName, templateName) => {
       'server/config.js',
     ],
     Vue2: [
-      'postcss.config.cjs',
-      'server/config.cjs',
+      'postcss.config.js',
+      'server/config.js',
       'src/components/Index.vue',
       'src/index.ts',
     ],
