@@ -1,6 +1,6 @@
 {
   "name": "@kdcloudjs/kd-custom-control-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "kd custom control cli",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
