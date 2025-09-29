@@ -1,6 +1,7 @@
 // 更新模板的方法
 const fs = require('fs')
 const path = require('path')
+const updateKwcNameSpace = require('./updateKwcNameSpace.js')
 
 const replaceFileContent = (fileName, reg, replaceStr) => {
   return new Promise((resolve, reject) => {
@@ -51,10 +52,20 @@ module.exports = async (controlName, templateName) => {
       'src/index.ts',
     ],
     jQuery: ['index.js'],
+    KWC: [
+      'src/index.js',
+      'src/devIndex.js',
+      'postcss.config.js',
+      'server/config.js',
+    ]
   }
   await replaceFilesContent(
     fileListMap[templateName],
     controlName,
     /\$\{CONTROL_NAME\}/g
   )
+  if (templateName === 'KWC') {
+    // 如果是KWC则更新命名空间
+    updateKwcNameSpace(controlName)
+  }
 }
