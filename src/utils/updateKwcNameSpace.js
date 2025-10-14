@@ -14,6 +14,29 @@ function writeFileSafe(p, content) {
   fs.writeFileSync(p, content, "utf8");
 }
 
+function _updateKwcNameSpace(filePath, controlName) {
+    const original = readFileSafe(filePath);
+    if (original === null) {
+        console.warn(`File not found: ${filePath} — skipping.`);
+        return;
+   }
+
+    let updated = original;
+
+    // 全局替换 x/ -> controlName/
+    updated = updated.replace(/x\//g, `${controlName}/`);
+
+    // 全局替换 x- -> controlName-
+    updated = updated.replace(/x-/g, `${controlName}-`);
+
+    if (updated !== original) {
+      writeFileSafe(filePath, updated);
+      console.log(`Updated references in: ${filePath}`);
+    } else {
+      console.log(`No references to replace in: ${filePath}`);
+    }
+}
+
 function updateKwcNameSpace(controlName) {
     const cwd = process.cwd();
     let projectRootCandidate = path.resolve(cwd, controlName);
@@ -33,6 +56,7 @@ function updateKwcNameSpace(controlName) {
     }
 
     const srcDir = path.join(projectRoot, "src");
+    const buildDir = path.join(projectRoot, "build");
     const modulesDir = path.join(srcDir, "modules");
     const oldDir = path.join(modulesDir, "x");
     const newDir = path.join(modulesDir, controlName);
@@ -59,26 +83,11 @@ function updateKwcNameSpace(controlName) {
     // 2) 更新 src/index.js 和 src/devIndex.js 中的引用
     ["index.js", "devIndex.js"].forEach((fileName) => {
       const filePath = path.join(srcDir, fileName);
-      const original = readFileSafe(filePath);
-      if (original === null) {
-        console.warn(`File not found: ${filePath} — skipping.`);
-        return;
-      }
-
-    let updated = original;
-
-    // 全局替换 x/ -> controlName/
-    updated = updated.replace(/x\//g, `${controlName}/`);
-
-    // 全局替换 x- -> controlName-
-    updated = updated.replace(/x-/g, `${controlName}-`);
-
-    if (updated !== original) {
-      writeFileSafe(filePath, updated);
-      console.log(`Updated references in: ${filePath}`);
-    } else {
-      console.log(`No references to replace in: ${filePath}`);
-    }
+      _updateKwcNameSpace(filePath, controlName);
+    });
+    ["webpack.dev.js", "webpack.prod.js"].forEach((fileName) => {
+      const filePath = path.join(buildDir, fileName);
+      _updateKwcNameSpace(filePath, controlName);
     });
 }
 
