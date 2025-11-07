@@ -1,0 +1,10 @@
+{
+    "React": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#react",
+    "React-noUI": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#react-noui",
+    "Vue2": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#vue2",
+    "Vue2-noUI": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#vue2-noui",
+    "Vue3": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#vue3",
+    "Vue3-noUI": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#vue3-noui",
+    "jQuery": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#jquery",
+    "KWC": "direct:http://gitlab.kingdee.com/bos-cli-template/kd-custom-control-template.git#kwc"
+  }

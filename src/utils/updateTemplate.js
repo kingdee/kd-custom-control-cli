@@ -1,7 +1,11 @@
 // 更新模板的方法
+const ora = require('ora')
 const fs = require('fs')
 const path = require('path')
-const updateKwcNameSpace = require('./updateKwcNameSpace.js')
+const {
+  updateKwcNameSpace
+} = require('./kwc')
+const spiner = ora('模版更新中')
 
 const replaceFileContent = (fileName, reg, replaceStr) => {
   return new Promise((resolve, reject) => {
@@ -31,32 +35,32 @@ const replaceFilesContent = async (fileList, controlName, reg) => {
   }
 }
 
-module.exports = async (controlName, templateName) => {
+module.exports = async (controlName, templateName, config) => {
   const fileListMap = {
     React: [
       'src/index.tsx',
       'src/devIndex.tsx',
       'postcss.config.js',
-      'server/config.js',
+      'server/config.js'
     ],
     Vue2: [
       'postcss.config.js',
       'server/config.js',
       'src/components/Index.vue',
-      'src/index.ts',
+      'src/index.ts'
     ],
     Vue3: [
       'postcss.config.js',
       'server/config.js',
       'src/components/Index.vue',
-      'src/index.ts',
+      'src/index.ts'
     ],
     jQuery: ['index.js'],
     KWC: [
       'src/index.js',
-      'src/devIndex.js',
-      'postcss.config.js',
       'server/config.js',
+      'build/webpack.prod.js',
+      'src/index.js-meta.kwc'
     ]
   }
   await replaceFilesContent(
@@ -65,7 +69,9 @@ module.exports = async (controlName, templateName) => {
     /\$\{CONTROL_NAME\}/g
   )
   if (templateName === 'KWC') {
+    spiner.start()
     // 如果是KWC则更新命名空间
     updateKwcNameSpace(controlName)
+    spiner.stop()
   }
 }
