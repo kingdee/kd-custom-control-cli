@@ -11,30 +11,30 @@ async function updateIsvModuleNameInfo (xmlFilePath) {
   const xmlFields = ['masterLabel', 'isv', 'moduleid']
   const metaXmlFieldValue = getMetaXmlFieldsValue(xmlFilePath, xmlFields) || {}
   let { masterLabel: solutionName, moduleid: moduleId, isv: isvId } = metaXmlFieldValue
-  if (solutionName && moduleId && isvId) return // 不是第一次deploy，已输入过
+  if (solutionName && moduleId && isvId) return { solutionName, moduleId, isvId } // 不是第一次deploy，已输入过
   const promptsArr = []
   if (!solutionName) {
     promptsArr.push({
       type: 'text',
       name: 'solutionName',
-      message: '请输入方案名称(*)',
-      validate: v => !!v || '方案名称不能为空'
+      message: '*请输入方案名称',
+      validate: v => (!!v && v.length <= 50) || '方案名称不能为空且不能超过50个字符'
     })
   }
   if (!moduleId) {
     promptsArr.push({
       type: 'text',
       name: 'moduleId',
-      message: '请输入领域标识',
-      validate: v => !!v || '领域标识不能为空'
+      message: '*请输入领域标识',
+      validate: v => (!!v && v.length <= 50 && /^[a-z]+$/.test(v)) || '领域标识需要为英文小写字母，不能为空且不能超过50个字符'
     })
   }
   if (!isvId) {
     promptsArr.push({
       type: 'text',
       name: 'isvId',
-      message: '请输入开发商标识',
-      validate: v => !!v || '开发商标识不能为空'
+      message: '*请输入开发商标识',
+      validate: v => (!!v && v.length <= 50 && /^[a-z]+$/.test(v)) || '开发商标识需要为英文小写字母，不能为空且不能超过50个字符'
     })
   }
   // --- 基础信息 ---
@@ -56,6 +56,7 @@ async function updateIsvModuleNameInfo (xmlFilePath) {
   }
   const serverConfigFilePath = 'server/config.js'
   updateServerConfig(serverConfigFilePath, updateServerConfigData)
+  return { solutionName, moduleId, isvId }
 }
 
 module.exports = updateIsvModuleNameInfo

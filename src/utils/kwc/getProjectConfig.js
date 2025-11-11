@@ -77,14 +77,14 @@ async function getProjectConfig () {
     getBackendUrlPrompt = {
       type: 'text',
       name: 'backendUrl',
-      message: '请输入后台环境地址URL:',
+      message: '*请输入苍穹环境地址(格式为：[http/https]://[ip地址/域名])',
       validate: (input) => isValidUrl(input) || '请输入合法的 http/https URL'
     }
   } else if (!isValidUrl(backendUrl)) {
     getBackendUrlPrompt = {
       type: 'text',
       name: 'backendUrl',
-      message: '请修改后台环境地址URL:',
+      message: '请修改苍穹环境地址(格式为：[http/https]://[ip地址/域名])',
       validate: (input) => isValidUrl(input) || '请输入合法的 http/https URL',
       initial: backendUrl
     }

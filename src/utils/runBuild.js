@@ -4,6 +4,7 @@ const ora = require('ora')
 const { spawn } = require('child_process')
 const installSpiner = ora('依赖安装中')
 const { error, success } = require('./log.js')
+const { getMetaKwcFile } = require('./kwc')
 
 /**
  * 在指定目录执行 shell 命令
@@ -14,9 +15,10 @@ const { error, success } = require('./log.js')
  */
 function runCommand (command, args, cwd) {
   return new Promise((resolve, reject) => {
+    const isInstall = args[0] === 'install'
     const child = spawn(command, args, {
       cwd,
-      stdio: args[0] === 'install' ? ['ignore', 'ignore', 'inherit'] : 'inherit',
+      stdio: isInstall ? ['ignore', 'ignore', 'inherit'] : 'inherit',
       shell: true
     })
 
@@ -52,13 +54,14 @@ async function runBuild (cwd = process.cwd()) {
     if (!fs.existsSync(nodeModulesPath)) {
       console.log('📦 检测到缺少 node_modules，正在执行 npm install...')
       installSpiner.start()
-      await runCommand('npm', ['install'], cwd)
+      await runCommand('npm', ['install', '--loglevel=error'], cwd)
       installSpiner.stop()
       success('✅ 依赖安装完成')
     }
 
-    await runCommand('npm', ['run', 'build:silent', '--silent'], cwd)
-    success('✅ 构建完成')
+    const isKWC = !!getMetaKwcFile()
+    await runCommand('npm', ['run', isKWC ? 'build:silent' : 'build', '--silent'], cwd)
+    success('✅ 项目构建完成')
   } catch (err) {
     error(`❌ 构建流程出错: ${err.message}`)
     throw err

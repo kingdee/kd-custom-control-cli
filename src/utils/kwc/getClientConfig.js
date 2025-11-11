@@ -59,20 +59,20 @@ async function getClientConfig (backendUrl, dataCenter) {
     {
       type: 'text',
       name: 'client_id',
-      message: '请输入client_id',
-      validate: v => !!v || 'client_id不能为空'
+      message: '*请输入OpenAPI第三方应用client_id',
+      validate: v => !!v || 'OpenAPI第三方应用client_id不能为空'
     },
     {
       type: 'text',
       name: 'client_secret',
-      message: '请输入client_secret',
-      validate: v => !!v || 'client_secret不能为空'
+      message: '*请输入OpenAPI第三方应用client_secret',
+      validate: v => !!v || 'OpenAPI第三方应用client_secret不能为空'
     },
     {
       type: 'text',
       name: 'username',
-      message: '请输入username',
-      validate: v => !!v || 'username不能为空'
+      message: '*请输入OpenAPI第三方应用username',
+      validate: v => !!v || 'OpenAPI第三方应用username不能为空'
     }
   ])
   entry = {

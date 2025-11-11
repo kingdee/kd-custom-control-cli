@@ -41,7 +41,7 @@ async function deploy (options) {
   }
   const controlName = isConsistency?.data?.controlName
 
-  await updateIsvModuleNameInfo(xmlFilePath)
+  const { solutionName } = await updateIsvModuleNameInfo(xmlFilePath) || {}
 
   // 先从本地项目config获取后台地址和数据中心，如果没值或格式不对，引导用户输入/修改， eg：请输入/修改后台环境url
 
@@ -79,7 +79,14 @@ async function deploy (options) {
     const uploadResData = uploadRes?.data || {}
     if (uploadResData?.status) {
       spiner.stop()
-      success('deploy 成功')
+      const successLog = `
+ xml元数据成功上传苍穹环境。
+ KWC自定义控件默认配置说明如下：
+   1. 控件方案ID默认为${controlName}，默认命名规则【项目名称】
+   2. 控件名称默认为${solutionName}, 默认命名规则【方案名称】
+   3. 控件标识默认为${controlName}ap，默认命名规则【项目名称+ap】
+`
+      success(successLog)
       return
     }
     if (uploadResData?.errorCode === '1001') {
@@ -104,7 +111,14 @@ async function deploy (options) {
       const reUploadRes = await uploadMetaXml({ backendUrl, accessToken: token, forceSave: force, xmlFilePath: newXmlFilePath })
       if (reUploadRes?.status === 200 && reUploadRes?.data?.status) {
         reUploadSpiner.stop()
-        success('元数据文件成功重新上传')
+        const successLog = `
+ xml元数据成功上传苍穹环境。
+ KWC自定义控件默认配置说明如下：
+   1. 控件方案ID默认为${nameRes?.name}，默认命名规则【项目名称】
+   2. 控件名称默认为${solutionName}, 默认命名规则【方案名称】
+   3. 控件标识默认为${nameRes?.name}ap，默认命名规则【项目名称+ap】
+        `
+        success(successLog)
       } else {
         reUploadSpiner.stop()
         error(`元数据文件重新上传失败： ${reUploadRes?.data?.message || reUploadRes?.message}`)
