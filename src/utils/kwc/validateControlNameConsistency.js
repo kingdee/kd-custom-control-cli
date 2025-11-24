@@ -1,6 +1,7 @@
 // kwc/validateControlNameConsistency.js
 const fs = require('fs')
 const path = require('path')
+const validateKwcNamespace = require('./validateKwcNamespace')
 
 function validateControlNameConsistency (xmlFilePath) {
   const cwd = process.cwd()
@@ -53,6 +54,15 @@ function validateControlNameConsistency (xmlFilePath) {
       message: `❌ 部署失败：${xmlFilePath}文件中声明的方案id(${xmlName})与src/index.js中注册的方案id不一致，请修改后重新部署。`
     }
   }
+
+  const validInfo = validateKwcNamespace(xmlName)
+  if (!validInfo.valid) {
+    return {
+      status: false,
+      message: `❌ 部署失败：${validInfo.error} `
+    }
+  }
+
   return {
     status: true,
     data: {

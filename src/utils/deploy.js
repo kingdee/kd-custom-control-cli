@@ -2,6 +2,7 @@ const {
   validateControlNameConsistency,
   getProjectConfig,
   getClientConfig,
+  saveClientConfig,
   uploadMetaXml,
   recheckAndGetToken,
   updateKwcTemplateName,
@@ -11,6 +12,7 @@ const {
 const path = require('path')
 const fs = require('fs')
 const ora = require('ora')
+const { encrypt } = require('./crypto')
 const { getAccessToken } = require('../api')
 const runBuild = require('./runBuild')
 const { safePrompts } = require('./prompts')
@@ -63,10 +65,27 @@ async function deploy (options) {
   const tokenData = await getAccessToken(backendUrl, getAccessTokenParams) || {}
   let token = tokenData.access_token || ''
   if (!token) {
-    token = await recheckAndGetToken(backendUrl, dataCenter, clientConfig)
+    const { tokenData: newTokenData, clientConfig: newClientConfig } = await recheckAndGetToken(backendUrl, dataCenter, clientConfig)
+    token = newTokenData?.access_token
     if (!token) {
       error('重输入的client_id、client_secret、username有误无法成功获取token，部署失败')
       return
+    }
+    const newClientInfo = {
+      client_id: newClientConfig.client_id,
+      client_secret: encrypt(newClientConfig.client_secret),
+      username: newClientConfig.username
+    }
+    saveClientConfig(backendUrl, dataCenter, newClientInfo)
+  } else {
+    // 保存clientConfig
+    if (clientConfig.isNew) {
+      const clientInfo = {
+        client_id: clientConfig.client_id,
+        client_secret: encrypt(clientConfig.client_secret),
+        username: clientConfig.username
+      }
+      saveClientConfig(backendUrl, dataCenter, clientInfo)
     }
   }
   // 执行npm run build

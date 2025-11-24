@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const { safePrompts } = require('../prompts')
-const { encrypt, decrypt } = require('../crypto')
+const { decrypt } = require('../crypto')
 const { OPEN_API } = require('../../constants/index')
 
 /**
@@ -78,16 +78,9 @@ async function getClientConfig (backendUrl, dataCenter) {
   entry = {
     client_id: res.client_id,
     client_secret: res.client_secret,
-    username: res.username
+    username: res.username,
+    isNew: true
   }
-  const entryWithEncrypt = {
-    ...entry,
-    client_secret: encrypt(entry.client_secret)
-  }
-  // 保存配置
-  openApiConfig[key] = entryWithEncrypt
-  config[OPEN_API] = openApiConfig
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
   return entry
 }
 
